@@ -1,7 +1,22 @@
-import React from "react";
+import { Suspense } from "react";
 
-const Page = () => {
-  return <div>page</div>;
-};
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <RedirectGate />
+    </Suspense>
+  );
+}
 
-export default Page;
+async function RedirectGate() {
+  const { createClient } = await import("@/lib/supabase/server");
+  const { redirect } = await import("next/navigation");
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  redirect(user ? "/dashboard" : "/auth/login");
+  return null;
+}
