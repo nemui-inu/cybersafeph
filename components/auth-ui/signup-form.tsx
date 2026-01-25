@@ -46,7 +46,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { Lgu } from "@/types/lgus";
+import type { Lgu, Role } from "@/types/database";
 
 const NAME_MIN = 2;
 const NAME_MAX = 54;
@@ -101,7 +101,7 @@ const formSchema = z
       .toLowerCase()
       .regex(
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        "Please enter a valid email address."
+        "Please enter a valid email address.",
       ),
     password: z
       .string()
@@ -114,6 +114,7 @@ const formSchema = z
       .refine((v) => !/\s/.test(v), "Password must not contain spaces."),
     confirm_password: z.string().min(1, "Please confirm your password."),
     lgu: z.uuid("Please select a valid LGU."),
+    role: z.uuid("Please select a valid role."),
     terms_and_conditions: z.boolean().refine((v) => v === true, {
       message: "You must accept the Terms and Conditions.",
     }),
@@ -136,6 +137,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [lgusLoading, setLgusLoading] = useState(false);
   const [lgusError, setLgusError] = useState<string | null>(null);
 
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [rolesLoading, setRolesLoading] = useState(false);
+  const [rolesError, setRolesError] = useState<string | null>(null);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -155,6 +160,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       password: "",
       confirm_password: "",
       lgu: "",
+      role: "",
       terms_and_conditions: false,
       data_privacy_policy: false,
     },
@@ -162,7 +168,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
   useEffect(() => {
     setLgusLoading(true);
+    setRolesLoading(true);
     setLgusError(null);
+    setRolesError(null);
 
     const supabase = createClient();
 
@@ -173,16 +181,30 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         setLgus(data);
       } catch (error: unknown) {
         setLgusError(
-          error instanceof Error ? error.message : "An error occured"
+          error instanceof Error ? error.message : "An error occured",
         );
       } finally {
         setLgusLoading(false);
       }
     };
 
+    const fetchRoles = async () => {
+      try {
+        const { data, error } = await supabase.from("roles").select("*");
+        if (error) throw error;
+        setRoles(data);
+      } catch (error: unknown) {
+        setRolesError(
+          error instanceof Error ? error.message : "An error occured",
+        );
+      } finally {
+        setRolesLoading(false);
+      }
+    };
+
     fetchLgus();
-    if (lgus.length === 0) setLgusError("Error: Failed to fetch LGUs.");
-  }, [lgus.length]);
+    fetchRoles();
+  }, []);
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setError(null);
@@ -398,6 +420,59 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               </FieldGroup>
               <FieldGroup className="flex flex-col md:flex-row gap-4">
                 <Controller
+                  name="role"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid} className="flex-1">
+                      <FieldLabel htmlFor={field.name}>Role</FieldLabel>
+                      <Select
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={lgusError !== null}
+                      >
+                        <SelectTrigger
+                          id="signup-form-select-role"
+                          aria-invalid={fieldState.invalid}
+                          className="min-w-[120px]"
+                        >
+                          <SelectValue
+                            placeholder={
+                              rolesLoading ? (
+                                <div className="flex flex-row gap-2 items-center">
+                                  <Spinner />
+                                  Loading Roles
+                                </div>
+                              ) : (
+                                "Select Role"
+                              )
+                            }
+                          />
+                        </SelectTrigger>
+                        <SelectContent position="item-aligned">
+                          <SelectGroup>
+                            <SelectLabel>User Roles</SelectLabel>
+                            {roles.map((role) => (
+                              <SelectItem
+                                key={role.id}
+                                value={role.id.toString()}
+                              >
+                                {role.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                      <p className="text-sm text-destructive">
+                        {!rolesLoading && rolesError}
+                      </p>
+                    </Field>
+                  )}
+                />
+                <Controller
                   name="lgu"
                   control={form.control}
                   render={({ field, fieldState }) => (
@@ -450,68 +525,66 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                     </Field>
                   )}
                 />
-                <div className="flex-1">
-                  <FieldGroup>
-                    <Controller
-                      name="terms_and_conditions"
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <Field
-                          data-invalid={fieldState.invalid}
-                          className="flex-1"
-                          orientation={"horizontal"}
-                        >
-                          <Checkbox
-                            id={field.name}
-                            name={field.name}
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                          <FieldLabel htmlFor={field.name}>
-                            <p>
-                              I agree to the CyberSafePH{" "}
-                              <span className="underline hover:cursor-pointer">
-                                Terms and Conditions
-                              </span>
-                            </p>
-                          </FieldLabel>
-                          {fieldState.invalid && (
-                            <FieldError errors={[fieldState.error]} />
-                          )}
-                        </Field>
+              </FieldGroup>
+              <FieldGroup>
+                <Controller
+                  name="terms_and_conditions"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="flex-1"
+                      orientation={"horizontal"}
+                    >
+                      <Checkbox
+                        id={field.name}
+                        name={field.name}
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                      <FieldLabel htmlFor={field.name}>
+                        <p>
+                          I agree to the CyberSafePH{" "}
+                          <span className="underline hover:cursor-pointer">
+                            Terms and Conditions
+                          </span>
+                        </p>
+                      </FieldLabel>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
                       )}
-                    />
-                    <Controller
-                      name="data_privacy_policy"
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <Field
-                          data-invalid={fieldState.invalid}
-                          className="flex-1"
-                          orientation={"horizontal"}
-                        >
-                          <Checkbox
-                            id={field.name}
-                            name={field.name}
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                          <FieldLabel htmlFor={field.name}>
-                            <p>
-                              I agree to the CyberSafePH{" "}
-                              <span className="underline hover:cursor-pointer">
-                                Data Privacy Policy
-                              </span>
-                            </p>
-                          </FieldLabel>
-                          {fieldState.invalid && (
-                            <FieldError errors={[fieldState.error]} />
-                          )}
-                        </Field>
+                    </Field>
+                  )}
+                />
+                <Controller
+                  name="data_privacy_policy"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="flex-1"
+                      orientation={"horizontal"}
+                    >
+                      <Checkbox
+                        id={field.name}
+                        name={field.name}
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                      <FieldLabel htmlFor={field.name}>
+                        <p>
+                          I agree to the CyberSafePH{" "}
+                          <span className="underline hover:cursor-pointer">
+                            Data Privacy Policy
+                          </span>
+                        </p>
+                      </FieldLabel>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
                       )}
-                    />
-                  </FieldGroup>
-                </div>
+                    </Field>
+                  )}
+                />
               </FieldGroup>
             </FieldGroup>
           </form>

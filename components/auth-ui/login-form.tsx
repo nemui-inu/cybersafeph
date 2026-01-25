@@ -41,14 +41,12 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
-  const handleLogin = async () => {
+  const handleLogin = async (email: string, password: string) => {
     const supabase = createClient();
     setIsLoading(true);
     setError(null);
@@ -64,6 +62,7 @@ export function LoginForm({
       setError(error instanceof Error ? error.message : "An error occured");
     } finally {
       setIsLoading(false);
+      form.reset();
     }
   };
 
@@ -76,9 +75,7 @@ export function LoginForm({
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    setEmail(data.email);
-    setPassword(data.password);
-    handleLogin();
+    handleLogin(data.email, data.password);
   }
 
   return (

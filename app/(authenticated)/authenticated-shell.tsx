@@ -7,6 +7,7 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { UserOptions } from "@/components/sidebar-ui/user-options";
 
 import { redirect } from "next/navigation";
+import { ProfileData } from "@/types/database";
 
 export default async function AuthenticatedShell({
   children,
@@ -29,9 +30,35 @@ export default async function AuthenticatedShell({
 
     const { data: profileData, error: profileError } = await supabase
       .from("profiles")
-      .select("*")
+      .select(
+        `
+        id,
+        email,
+        first_name,
+        middle_name,
+        last_name,
+        is_active,
+        is_verified,
+        created_at,
+        updated_at,
+
+        role:roles (
+          id,
+          name,
+          description
+        ),
+
+        lgu:lgus (
+          id,
+          name,
+          level,
+          region,
+          is_active
+        )
+       `,
+      )
       .eq("id", user.id)
-      .single();
+      .single<ProfileData>();
     if (profileError) throw profileError;
 
     if (profileData && profileData.is_active == false) {
