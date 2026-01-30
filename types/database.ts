@@ -12,31 +12,25 @@ export type Profile = {
   lgu_id: string | null;
 } | null;
 
-export type ProfileData = {
+export type ProfileContextValue = {
   id: string;
+  email: string;
+  role: "Admin" | "Staff";
+  lguId: string | null;
+  departmentId: string | null;
+  isActive: boolean;
+  isVerified: boolean;
+};
+
+export type ProfileData = {
   first_name: string;
   middle_name: string | null;
   last_name: string;
   email: string;
-  is_active: boolean;
-  is_verified: boolean;
-  created_at: string;
-  updated_at: string;
-
-  role: {
-    id: string;
-    name: string;
-    description: string | null;
-  };
-
-  lgu: {
-    id: string;
-    name: string;
-    level: string | null;
-    region: string | null;
-    is_active: boolean;
-  };
-} | null;
+  role: string;
+  department: string;
+  lgu: string;
+};
 
 export type Lgu = {
   id: string;

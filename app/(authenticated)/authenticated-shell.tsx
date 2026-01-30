@@ -4,10 +4,14 @@ import { ProfileProvider } from "@/components/profile/profile-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar-ui/app-sidebar";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { UserOptions } from "@/components/sidebar-ui/user-options";
+import { UserOptions } from "@/components/sidebar-ui/avatar-popover/user-options";
 
 import { redirect } from "next/navigation";
-import { ProfileData } from "@/types/database";
+
+function decodeJwtPayload(token: string) {
+  const payload = token.split(".")[1];
+  return JSON.parse(Buffer.from(payload, "base64").toString("utf8"));
+}
 
 export default async function AuthenticatedShell({
   children,
@@ -16,61 +20,22 @@ export default async function AuthenticatedShell({
 }) {
   const supabase = await createClient();
 
-  let profile;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) redirect("/auth/login");
 
-  try {
-    const { data, error: userError } = await supabase.auth.getUser();
-    if (userError) throw userError;
+  const jwt = decodeJwtPayload(session.access_token);
 
-    const user = data.user;
-    if (!user) {
-      redirect("/auth/login");
-      return;
-    }
-
-    const { data: profileData, error: profileError } = await supabase
-      .from("profiles")
-      .select(
-        `
-        id,
-        email,
-        first_name,
-        middle_name,
-        last_name,
-        is_active,
-        is_verified,
-        created_at,
-        updated_at,
-
-        role:roles (
-          id,
-          name,
-          description
-        ),
-
-        lgu:lgus (
-          id,
-          name,
-          level,
-          region,
-          is_active
-        )
-       `,
-      )
-      .eq("id", user.id)
-      .single<ProfileData>();
-    if (profileError) throw profileError;
-
-    if (profileData && profileData.is_active == false) {
-      redirect("/auth/login");
-      return;
-    }
-
-    profile = profileData;
-  } catch (error: unknown) {
-    console.error("Auth/Profile error: ", error);
-    redirect("/auth/login");
-  }
+  const profile = {
+    id: session.user.id,
+    email: session.user.email ?? "",
+    role: jwt.csp_role ?? "Staff",
+    lguId: jwt.csp_lgu_id as string | null,
+    departmentId: jwt.csp_department_id as string | null,
+    isActive: Boolean(jwt.csp_is_active),
+    isVerified: Boolean(jwt.csp_is_verified),
+  };
 
   return (
     <SidebarProvider>

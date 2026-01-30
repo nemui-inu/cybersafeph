@@ -1,15 +1,15 @@
 "use client";
 
 import React, { createContext, useContext } from "react";
-import type { ProfileData } from "@/types/database";
+import type { ProfileContextValue } from "@/types/database";
 
-const ProfileContext = createContext<ProfileData>(null);
+const ProfileContext = createContext<ProfileContextValue | null>(null);
 
 export function ProfileProvider({
   profile,
   children,
 }: {
-  profile: ProfileData;
+  profile: ProfileContextValue;
   children: React.ReactNode;
 }) {
   return (

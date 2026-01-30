@@ -1,6 +1,5 @@
 "use client";
 
-import { ShieldUserIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +15,7 @@ import {
   AdminReporting,
 } from "@/components/sidebar-ui/admin-items";
 import { useRouter } from "next/navigation";
+import { CybersafeLogo } from "../branding/cybersafe-logo";
 
 export function AppSidebar() {
   const router = useRouter();
@@ -32,10 +32,8 @@ export function AppSidebar() {
               size="lg"
               onClick={() => router.push("/dashboard")}
             >
-              <div className="flex flex-row gap-3 items-center">
-                <div className="p-1 bg-teal-400 dark:bg-teal-700 rounded-lg">
-                  <ShieldUserIcon size={24} className="" />
-                </div>
+              <div className="flex flex-row gap-2 items-center">
+                <CybersafeLogo className="size-8 text-primary" />
                 <h1 className="text-lg font-semibold">CyberSafePH</h1>
               </div>
             </SidebarMenuButton>

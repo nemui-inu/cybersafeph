@@ -1,6 +1,6 @@
 import { LoginForm } from "@/components/auth-ui/login-form";
 import { FlickeringGrid } from "@/components/ui/shadcn-io/flickering-grid";
-import { ShieldUserIcon } from "lucide-react";
+import { CybersafeLogo } from "@/components/branding/cybersafe-logo";
 
 export default function LoginPage() {
   return (
@@ -20,7 +20,7 @@ export default function LoginPage() {
             className="flex items-center gap-2 self-center font-medium"
           >
             <div className="flex size-6 items-center justify-center rounded-md">
-              <ShieldUserIcon className="size-42" />
+              <CybersafeLogo className="h-6 w-6 text-primary" />
             </div>
             CyberSafePH
           </a>
