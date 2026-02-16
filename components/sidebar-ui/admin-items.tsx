@@ -54,7 +54,7 @@ export function AdminPages() {
     },
     {
       title: "Users",
-      url: "#",
+      url: "/users",
       icon: UsersIcon,
     },
   ];
