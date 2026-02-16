@@ -46,7 +46,7 @@ export default function Page() {
       <div className="w-full h-screen flex flex-col gap-4">
         <div className="w-full h-full pb-[100px] flex flex-col md:flex-row gap-4">
           <div
-            className="flex-1 h-full bg-secondary rounded-xl"
+            className="flex-1 h-full bg-muted-foreground/5 rounded-xl"
             hidden={error === null || isLoading}
           >
             <div className="w-full h-full flex flex-col p-6 gap-2 items-center justify-center">
@@ -65,7 +65,7 @@ export default function Page() {
     <div className="w-full h-screen flex flex-col gap-4">
       <div className="w-full h-full pb-[100px] flex flex-col md:flex-row gap-4">
         <div
-          className="flex-1 h-full bg-secondary rounded-xl"
+          className="flex-1 h-full bg-muted-foreground/5 rounded-xl"
           hidden={!isLoading}
         >
           <LoadingSpinner className="mx-auto my-auto w-full h-full" />
@@ -79,7 +79,7 @@ export default function Page() {
           </div>
         </div>
         <div
-          className="flex-1 h-full bg-secondary rounded-xl"
+          className="flex-1 h-full bg-muted-foreground/5 rounded-xl"
           hidden={isLoading && error === null}
         >
           <div className="w-full h-full flex flex-col p-6 items-center justify-center">
