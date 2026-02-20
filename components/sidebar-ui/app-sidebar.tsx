@@ -30,11 +30,8 @@ export function AppSidebar() {
       <SidebarHeader className="bg-background w-full mt-0 pt-3">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              onClick={() => router.push("/dashboard")}
-            >
-              <div className="flex flex-row gap-2 items-center text-primary hover:text-teal-500 transition-colors duration-500">
+            <SidebarMenuButton size="lg" onClick={() => router.push("/")}>
+              <div className="flex flex-row gap-2 items-center text-primary hover:text-muted-foreground transition-colors duration-300">
                 <CybersafeLogo className="size-8" />
                 <h1 className="text-lg font-semibold">CyberSafePH</h1>
               </div>

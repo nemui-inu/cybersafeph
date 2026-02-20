@@ -26,7 +26,7 @@ export function RenderItems({ items, groupLabel }: RenderItemsProps) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel
-        className={!groupLabel ? "hidden" : "text-muted-foreground"}
+        className={!groupLabel ? "hidden" : "text-muted-foreground/75"}
       >
         {groupLabel}
       </SidebarGroupLabel>
@@ -36,7 +36,7 @@ export function RenderItems({ items, groupLabel }: RenderItemsProps) {
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 onClick={() => router.push(item.url)}
-                className="hover:bg-teal-500/20 hover:text-teal-800 dark:hover:text-teal-100 transition-colors duration-500"
+                className="hover:bg-secondary text-foreground/65 hover:text-foreground transition-colors duration-300"
               >
                 <item.icon />
                 <span>{item.title}</span>
