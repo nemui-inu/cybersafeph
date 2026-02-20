@@ -23,6 +23,7 @@ export type ProfileContextValue = {
 };
 
 export type ProfileData = {
+  id: string;
   first_name: string;
   middle_name: string | null;
   last_name: string;

@@ -1,7 +1,13 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import {
+  CopyIcon,
+  MoreHorizontal,
+  UserRoundCogIcon,
+  UserRoundSearchIcon,
+  UserRoundXIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,6 +20,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { DataTableColumnHeader } from "@/components/data-tables/column-headers";
+import { redirect } from "next/navigation";
 
 import type { ProfileData } from "@/types/database";
 
@@ -35,7 +42,6 @@ export const columns: ColumnDef<ProfileData>[] = [
     cell: ({ row }) => {
       return (
         <Checkbox
-          className="data-[state=checked]:bg-teal-500"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -112,8 +118,8 @@ export const columns: ColumnDef<ProfileData>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel className="text-xs opacity-50">
-              Actions
+            <DropdownMenuLabel className="text-xs text-muted-foreground w-[200px]">
+              Profile Actions
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -136,11 +142,21 @@ export const columns: ColumnDef<ProfileData>[] = [
                 });
               }}
             >
-              Copy profile email
+              <CopyIcon />
+              Copy email
             </DropdownMenuItem>
-            <DropdownMenuItem>View profile</DropdownMenuItem>
-            <DropdownMenuItem>Edit profile</DropdownMenuItem>
-            <DropdownMenuItem>Delete profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => redirect(`/users/${profile.id}`)}>
+              <UserRoundSearchIcon />
+              View profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <UserRoundCogIcon />
+              Edit profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <UserRoundXIcon />
+              Delete profile
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

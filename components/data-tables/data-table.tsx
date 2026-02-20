@@ -1,6 +1,12 @@
 "use client";
 
-import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ListPlusIcon,
+  SearchIcon,
+  Trash2Icon,
+} from "lucide-react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -62,7 +68,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-col w-full md:w-auto md:flex-row gap-4 md:justify-between items-end md:items-center">
         <InputGroup className="max-w-xs h-8 text-xs">
           <InputGroupInput
             onChange={(e) => table.setGlobalFilter(String(e.target.value))}
@@ -72,7 +78,25 @@ export function DataTable<TData, TValue>({
             <SearchIcon />
           </InputGroupAddon>
         </InputGroup>
-        <DataTableViewOptions table={table} />
+        <div className="flex gap-2">
+          <div
+            className={
+              table.getFilteredSelectedRowModel().rows.length > 0
+                ? "opacity-100 transition-opacity ease-in-out duration-500"
+                : "opacity-0 transition-opcaity ease-in-out duration-500 pointer-events-none"
+            }
+          >
+            <Button variant={"destructive"} className="h-8" size="sm">
+              <Trash2Icon />
+              Delete Selected
+            </Button>
+          </div>
+          <DataTableViewOptions table={table} />
+          <Button size="sm" className="h-8">
+            <ListPlusIcon />
+            Add Row
+          </Button>
+        </div>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
@@ -124,7 +148,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-0 justify-between items-center">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -145,11 +169,16 @@ export function DataTable<TData, TValue>({
             <ChevronRightIcon />
           </Button>
         </div>
-        <div className="pe-1">
-          <p className="text-xs opacity-75">
+        <div className="flex md:justify-between justify-center items-center gap-1 md:gap-4 text-xs text-muted-foreground pe-1 w-full md:w-auto">
+          <div>
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+          <div>|</div>
+          <div>
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
-          </p>
+          </div>
         </div>
       </div>
     </div>
