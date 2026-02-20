@@ -88,7 +88,7 @@ export default function Page() {
             <h1 className="text-3xl font-bold">
               {profile.first_name} {profile.last_name}
             </h1>
-            <div className="w-full flex flex-row gap-2 justify-center items-center mt-2">
+            <div className="w-full flex flex-row gap-2 flex-wrap justify-center items-center mt-2">
               <Badge className="bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-400 hover:bg-teal-600">
                 {profile.role}
               </Badge>

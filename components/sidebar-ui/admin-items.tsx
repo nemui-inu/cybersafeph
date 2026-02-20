@@ -6,17 +6,10 @@ import {
   ScrollTextIcon,
   FileClockIcon,
 } from "lucide-react";
-import {
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarGroupLabel,
-} from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
+import { RenderItems } from "./render-items";
 
 export function AdminItemsPrimary() {
+  const label = "Overview";
   const items = [
     {
       title: "Dashboard",
@@ -25,27 +18,11 @@ export function AdminItemsPrimary() {
     },
   ];
 
-  const router = useRouter();
-
-  return (
-    <SidebarGroup>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton onClick={() => router.push(item.url)}>
-                <item.icon />
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
+  return <RenderItems items={items} groupLabel={label} />;
 }
 
 export function AdminPages() {
+  const label = "Pages";
   const pages = [
     {
       title: "LGUs",
@@ -59,28 +36,11 @@ export function AdminPages() {
     },
   ];
 
-  const router = useRouter();
-
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Pages</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {pages.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton onClick={() => router.push(item.url)}>
-                <item.icon />
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
+  return <RenderItems items={pages} groupLabel={label} />;
 }
 
 export function AdminReporting() {
+  const label = "Reporting";
   const reporting = [
     {
       title: "Reports",
@@ -94,28 +54,11 @@ export function AdminReporting() {
     },
   ];
 
-  const router = useRouter();
-
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Reporting</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {reporting.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton onClick={() => router.push(item.url)}>
-                <item.icon />
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
+  return <RenderItems items={reporting} groupLabel={label} />;
 }
 
 export function AdminConfiguration() {
+  const label = "Configuration";
   const configuration = [
     {
       title: "System Settings",
@@ -124,23 +67,5 @@ export function AdminConfiguration() {
     },
   ];
 
-  const router = useRouter();
-
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Configuration</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {configuration.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton onClick={() => router.push(item.url)}>
-                <item.icon />
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
+  return <RenderItems items={configuration} groupLabel={label} />;
 }

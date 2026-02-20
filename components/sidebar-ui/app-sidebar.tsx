@@ -16,9 +16,11 @@ import {
 } from "@/components/sidebar-ui/admin-items";
 import { useRouter } from "next/navigation";
 import { CybersafeLogo } from "../branding/cybersafe-logo";
+import { useProfile } from "../profile/profile-provider";
 
 export function AppSidebar() {
   const router = useRouter();
+  const profile = useProfile();
 
   return (
     <Sidebar
@@ -32,8 +34,8 @@ export function AppSidebar() {
               size="lg"
               onClick={() => router.push("/dashboard")}
             >
-              <div className="flex flex-row gap-2 items-center">
-                <CybersafeLogo className="size-8 text-primary" />
+              <div className="flex flex-row gap-2 items-center text-primary hover:text-teal-500 transition-colors duration-500">
+                <CybersafeLogo className="size-8" />
                 <h1 className="text-lg font-semibold">CyberSafePH</h1>
               </div>
             </SidebarMenuButton>
@@ -42,9 +44,13 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="bg-background border-none">
         <AdminItemsPrimary />
-        <AdminPages />
-        <AdminReporting />
-        <AdminConfiguration />
+        {profile?.role === "Administrator" && (
+          <>
+            <AdminPages />
+            <AdminReporting />
+            <AdminConfiguration />
+          </>
+        )}
       </SidebarContent>
     </Sidebar>
   );
