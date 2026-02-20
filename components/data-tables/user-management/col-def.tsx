@@ -11,11 +11,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 import { DataTableColumnHeader } from "@/components/data-tables/column-headers";
 
 import type { ProfileData } from "@/types/database";
 
 export const columns: ColumnDef<ProfileData>[] = [
+  {
+    id: "select",
+    header: ({ table }) => {
+      return (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <Checkbox
+          className="data-[state=checked]:bg-teal-500"
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      );
+    },
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "first_name",
     header: ({ column }) => (
@@ -88,7 +117,24 @@ export const columns: ColumnDef<ProfileData>[] = [
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(profile.email)}
+              onClick={() => {
+                navigator.clipboard.writeText(profile.email);
+                toast.success("Copied to clipboard", {
+                  description: profile.email,
+                  classNames: {
+                    toast: `
+                    !bg-muted-foreground/5 !text-green-500
+                    !transition-all !duration-700 !ease-out
+                    !data-[state=open]:opacity-100
+                    !data-[state=closed]:opacity-0
+                    !data-[state=open]:translate-y-0
+                    !data-[state=closed]:-translate-y-2
+                  `,
+                    title: "!font-semibold !text-primary",
+                    description: "!text-xs !text-muted-foreground",
+                  },
+                });
+              }}
             >
               Copy profile email
             </DropdownMenuItem>

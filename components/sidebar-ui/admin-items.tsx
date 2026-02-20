@@ -26,7 +26,7 @@ export function AdminPages() {
   const pages = [
     {
       title: "LGUs",
-      url: "#",
+      url: "/wip",
       icon: LandmarkIcon,
     },
     {
@@ -44,12 +44,12 @@ export function AdminReporting() {
   const reporting = [
     {
       title: "Reports",
-      url: "#",
+      url: "/wip",
       icon: ScrollTextIcon,
     },
     {
       title: "Audit Logs",
-      url: "#",
+      url: "/wip",
       icon: FileClockIcon,
     },
   ];
@@ -62,7 +62,7 @@ export function AdminConfiguration() {
   const configuration = [
     {
       title: "System Settings",
-      url: "#",
+      url: "/wip",
       icon: SettingsIcon,
     },
   ];

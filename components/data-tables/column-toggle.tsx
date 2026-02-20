@@ -24,7 +24,7 @@ export function DataTableViewOptions<TData>({
         <Button
           variant="outline"
           size="sm"
-          className="ml-auto hidden h-8 lg:flex"
+          className="ml-auto hidden h-8 lg:flex bg-muted-foreground/5"
         >
           <Settings2 />
           Columns
