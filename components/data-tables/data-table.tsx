@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
@@ -48,19 +48,23 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: "includesString",
     state: {
       sorting,
-      columnFilters,
+      globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
   });
 
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex flex-row justify-between items-center">
         <InputGroup className="max-w-xs h-8 text-xs">
-          <InputGroupInput placeholder="Search..." />
+          <InputGroupInput
+            onChange={(e) => table.setGlobalFilter(String(e.target.value))}
+            placeholder="Search..."
+          />
           <InputGroupAddon align="inline-start">
             <SearchIcon />
           </InputGroupAddon>
