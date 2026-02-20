@@ -16,8 +16,8 @@ export type ProfileContextValue = {
   id: string;
   email: string;
   role: "Administrator" | "Staff" | "Viewer";
-  lguId: string | null;
-  departmentId: string | null;
+  lgu: string | null;
+  department: string | null;
   isActive: boolean;
   isVerified: boolean;
 };

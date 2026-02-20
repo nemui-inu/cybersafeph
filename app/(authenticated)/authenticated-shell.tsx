@@ -7,11 +7,7 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { UserOptions } from "@/components/sidebar-ui/avatar-popover/user-options";
 
 import { redirect } from "next/navigation";
-
-function decodeJwtPayload(token: string) {
-  const payload = token.split(".")[1];
-  return JSON.parse(Buffer.from(payload, "base64").toString("utf8"));
-}
+import { ProfileContextValue } from "@/types/database";
 
 export default async function AuthenticatedShell({
   children,
@@ -21,20 +17,25 @@ export default async function AuthenticatedShell({
   const supabase = await createClient();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/auth/login");
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  const jwt = decodeJwtPayload(session.access_token);
+  if (error || !user) redirect("/auth/login");
 
-  const profile = {
-    id: session.user.id,
-    email: session.user.email ?? "",
-    role: jwt.csp_role ?? "Staff",
-    lguId: jwt.csp_lgu_id as string | null,
-    departmentId: jwt.csp_department_id as string | null,
-    isActive: Boolean(jwt.csp_is_active),
-    isVerified: Boolean(jwt.csp_is_verified),
+  const { data: prof, error: profErr } = await supabase.rpc("get_profile_data");
+  const p = prof?.[0];
+
+  if (profErr || !p) redirect("/auth/login");
+
+  const profile: ProfileContextValue = {
+    id: user.id,
+    email: p.email ?? user.email ?? "",
+    role: p.role ?? "Viewer",
+    lgu: p.lgu ?? null,
+    department: p.department ?? null,
+    isActive: p.is_active ?? false,
+    isVerified: p.is_verified ?? false,
   };
 
   return (
