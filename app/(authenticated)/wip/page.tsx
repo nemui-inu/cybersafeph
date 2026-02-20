@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { CybersafeLogo } from "@/components/branding/cybersafe-logo";
 
 export default function Page() {
